@@ -35,6 +35,7 @@ flutter:
   assets:
     - assets/launcher/
     - assets/images/
+    - assets/images/data/
 
   fonts:
     - family: Atone
