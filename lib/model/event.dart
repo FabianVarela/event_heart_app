@@ -4,10 +4,10 @@ class Event {
   Event(
     this.name,
     this.currentMonth,
-    this.imageUrl,
+    this.imageUrl, [
     this.eventDates,
     this.color,
-  );
+  ]);
 
   final String name;
   final String currentMonth;
@@ -151,5 +151,28 @@ List<Event> events = <Event>[
       ),
     ],
     Color(0xFF383109),
+  ),
+];
+
+List<Event> pastEvents = <Event>[
+  Event(
+    'Gracias totales',
+    'Febrero 2020',
+    'assets/images/data/gracias_totales.jpeg',
+  ),
+  Event(
+    'Foo fighters',
+    'Enero 2020',
+    'assets/images/data/foo.jpeg',
+  ),
+  Event(
+    'Flutter Bootcamp',
+    'Diciembre 2019',
+    'assets/images/data/flutter_boot.jpeg',
+  ),
+  Event(
+    'Call of Duty championship',
+    'Marzo 2020',
+    'assets/images/data/call.jpeg',
   ),
 ];
