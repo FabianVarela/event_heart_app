@@ -3,9 +3,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class CustomTextShadow extends StatelessWidget {
-  CustomTextShadow(this.text, {this.style});
+  CustomTextShadow(this.text, {this.maxLines, this.overflow, this.style,});
 
   final String text;
+  final int maxLines;
+  final TextOverflow overflow;
   final TextStyle style;
 
   @override
@@ -18,6 +20,8 @@ class CustomTextShadow extends StatelessWidget {
             left: 2,
             child: Text(
               text,
+              maxLines: maxLines,
+              overflow: overflow,
               style: style.copyWith(
                 color: Colors.black.withOpacity(.5),
               ),
@@ -27,6 +31,8 @@ class CustomTextShadow extends StatelessWidget {
             filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
             child: Text(
               text,
+              maxLines: maxLines,
+              overflow: overflow,
               style: style,
             ),
           ),
