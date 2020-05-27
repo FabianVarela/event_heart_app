@@ -5,7 +5,9 @@ import 'package:event_heart_app/model/event.dart';
 import 'package:event_heart_app/ui/common/custom_app_bar.dart';
 import 'package:event_heart_app/ui/common/custom_button.dart';
 import 'package:event_heart_app/ui/common/custom_text_shadow.dart';
+import 'package:event_heart_app/ui/common/dot_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomeUI extends StatefulWidget {
   @override
@@ -14,9 +16,11 @@ class HomeUI extends StatefulWidget {
 
 class _HomeUIState extends State<HomeUI> {
   final List<Event> _events = events;
+  final List<Event> _pastEvents = pastEvents;
 
   Event _currentEvent;
   int _currentIndex = 0;
+  int _currentPastIndex = 0;
 
   List<String> _filters = <String>['Por fecha', 'Orden alfabético'];
   String _filter;
@@ -50,16 +54,18 @@ class _HomeUIState extends State<HomeUI> {
           child: Stack(
             children: <Widget>[
               CustomAppBar(),
-              Padding(
-                padding: EdgeInsets.only(top: 120, left: 20, right: 20),
-                child: Column(
-                  children: <Widget>[
-                    _setComing(),
-                    _setTitle(),
-                    _setButtons(),
-                    _setPresentEvents(),
-                    _setPastEvents(),
-                  ],
+              SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.only(top: 120, left: 20, right: 20),
+                  child: Column(
+                    children: <Widget>[
+                      _setComing(),
+                      _setTitle(),
+                      _setButtons(),
+                      _setPresentEvents(),
+                      _setPastEvents(),
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -215,8 +221,8 @@ class _HomeUIState extends State<HomeUI> {
     return DropdownButtonHideUnderline(
       child: DropdownButton<String>(
         value: _filter,
-        icon: Icon(Icons.arrow_drop_down, color: Colors.white),
-        style: TextStyle(
+        icon: Icon(Icons.arrow_drop_down, color: Colors.grey),
+        style: GoogleFonts.montserrat(
           fontSize: 14,
           color: Colors.black,
         ),
@@ -224,8 +230,8 @@ class _HomeUIState extends State<HomeUI> {
         selectedItemBuilder: (_) {
           return _filters.map((String value) {
             return Padding(
-              padding:  EdgeInsets.symmetric(horizontal: 5),
-              child: Text(
+              padding: EdgeInsets.symmetric(horizontal: 5),
+              child: CustomTextShadow(
                 _filter,
                 style: TextStyle(color: Colors.white),
               ),
@@ -245,12 +251,93 @@ class _HomeUIState extends State<HomeUI> {
 
   Widget _setPastEvents() {
     return Padding(
-      padding: EdgeInsets.only(top: 30),
+      padding: EdgeInsets.only(top: 30, bottom: 20),
       child: _setSection(
         'Eventos pasados',
-        Container(
-          height: 160,
+        Stack(
+          children: <Widget>[
+            Container(
+              height: 180,
+              child: PageView.builder(
+                itemCount: _pastEvents.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (_, int index) {
+                  final Event item = _pastEvents[index];
+
+                  return Container(
+                    //height: 250,
+                    width: 100,
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    child: _setCardPastEvents(item),
+                  );
+                },
+                onPageChanged: (int position) {
+                  setState(() => _currentPastIndex = position);
+                },
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 2,
+              child: DotIndicator(
+                currentList: _pastEvents,
+                currentIndex: _currentPastIndex,
+              ),
+            ),
+          ],
         ),
+      ),
+    );
+  }
+
+  Widget _setCardPastEvents(Event item) {
+    return Card(
+      elevation: 5,
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(0),
+      ),
+      child: Stack(
+        children: <Widget>[
+          Image.asset(
+            item.imageUrl,
+            fit: BoxFit.cover,
+            width: double.infinity,
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 20,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: CustomTextShadow(
+                      item.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                  CustomTextShadow(
+                    item.currentMonth,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
