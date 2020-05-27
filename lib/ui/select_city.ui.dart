@@ -120,7 +120,9 @@ class _SelectCityUIState extends State<SelectCityUI> {
     return Padding(
       padding: EdgeInsets.only(bottom: 10),
       child: GestureDetector(
-        onTap: () {},
+        onTap: _currentCity == null
+            ? null
+            : () => Navigator.pushNamed(context, '/home'),
         child: Padding(
           padding: EdgeInsets.all(5),
           child: Row(
