@@ -1,3 +1,4 @@
+import 'package:event_heart_app/ui/home.ui.dart';
 import 'package:event_heart_app/ui/select_city.ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,7 +23,19 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: SelectCityUI(),
+      initialRoute: '/',
+      onGenerateRoute: (RouteSettings settings) {
+        return MaterialPageRoute<dynamic>(builder: (_) {
+          switch (settings.name) {
+            case '/':
+              return SelectCityUI();
+            case '/home':
+              return HomeUI();
+            default:
+              return Container();
+          }
+        });
+      },
     );
   }
 }
