@@ -131,14 +131,16 @@ class _SelectCityUIState extends State<SelectCityUI> {
                 'Buscar evento',
                 style: TextStyle(
                   fontSize: 18,
-                  color: Colors.white,
+                  color: _currentCity == null ? Colors.grey : Colors.white,
                 ),
               ),
               SizedBox(width: 5),
               Icon(
                 Icons.arrow_forward,
                 size: 30,
-                color: Colors.red,
+                color: _currentCity == null
+                    ? Colors.redAccent.withOpacity(.5)
+                    : Colors.red,
               ),
             ],
           ),
