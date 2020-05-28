@@ -1,4 +1,5 @@
 import 'package:event_heart_app/ui/home.ui.dart';
+import 'package:event_heart_app/ui/my_events.ui.dart';
 import 'package:event_heart_app/ui/select_city.ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,6 +34,8 @@ class MyApp extends StatelessWidget {
               return HomeUI(
                 city: (settings.arguments as dynamic)['city'] as String,
               );
+            case '/profile':
+              return MyEvents();
             default:
               return Container();
           }
