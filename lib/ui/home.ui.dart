@@ -6,10 +6,15 @@ import 'package:event_heart_app/ui/common/custom_app_bar.dart';
 import 'package:event_heart_app/ui/common/custom_button.dart';
 import 'package:event_heart_app/ui/common/custom_text_shadow.dart';
 import 'package:event_heart_app/ui/common/dot_indicator.dart';
+import 'package:event_heart_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomeUI extends StatefulWidget {
+  HomeUI({@required this.city});
+
+  final String city;
+
   @override
   _HomeUIState createState() => _HomeUIState();
 }
@@ -25,6 +30,8 @@ class _HomeUIState extends State<HomeUI> {
   List<String> _filters = <String>['Por fecha', 'Orden alfabético'];
   String _filter;
 
+  bool _isShowingDetails = false;
+
   @override
   void initState() {
     super.initState();
@@ -36,40 +43,40 @@ class _HomeUIState extends State<HomeUI> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey,
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          image: _currentEvent.imageUrl.isEmpty
-              ? null
-              : DecorationImage(
-                  image: AssetImage(_currentEvent.imageUrl),
-                  fit: BoxFit.cover,
-                ),
-        ),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-          child: Stack(
-            children: <Widget>[
-              CustomAppBar(),
-              SingleChildScrollView(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 120, left: 20, right: 20),
-                  child: Column(
-                    children: <Widget>[
-                      _setComing(),
-                      _setTitle(),
-                      _setButtons(),
-                      _setPresentEvents(),
-                      _setPastEvents(),
-                    ],
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        backgroundColor: Colors.grey,
+        body: Stack(
+          children: <Widget>[
+            Image.asset(
+              _currentEvent.imageUrl,
+              fit: BoxFit.cover,
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+            ),
+            BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+              child: Stack(
+                children: <Widget>[
+                  CustomAppBar(),
+                  SingleChildScrollView(
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 120, left: 20, right: 20),
+                      child: Column(
+                        children: <Widget>[
+                          _setComing(),
+                          _setTitle(),
+                          if (!_isShowingDetails) _setEventList(),
+                          if (_isShowingDetails) _setDetailEvent(),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -79,26 +86,28 @@ class _HomeUIState extends State<HomeUI> {
     return Row(
       children: <Widget>[
         IconButton(
-          onPressed: () => Navigator.pop(context),
+          onPressed: _restoreScreen,
           icon: Icon(
             Icons.arrow_back,
             size: 30,
-            color: Colors.white,
+            color: Colors.grey,
           ),
         ),
-        Expanded(
-          child: Padding(
-            padding: EdgeInsets.only(right: 30),
-            child: Text(
-              'Evento próximo',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18,
-                color: Colors.white,
+        if (!_isShowingDetails)
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(right: 30),
+              child: Center(
+                child: CustomTextShadow(
+                  'Evento próximo',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
           ),
-        ),
       ],
     );
   }
@@ -117,6 +126,18 @@ class _HomeUIState extends State<HomeUI> {
     );
   }
 
+  /// Event List
+
+  Widget _setEventList() {
+    return Column(
+      children: <Widget>[
+        _setButtons(),
+        _setPresentEvents(),
+        _setPastEvents(),
+      ],
+    );
+  }
+
   Widget _setButtons() {
     return Padding(
       padding: EdgeInsets.only(top: 20),
@@ -124,7 +145,7 @@ class _HomeUIState extends State<HomeUI> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           CustomButton(
-            onPressed: () {},
+            onPressed: () => setState(() => _isShowingDetails = true),
             text: 'Ver Fechas',
             backgroundColor: Colors.red,
             textColor: Colors.white,
@@ -367,5 +388,208 @@ class _HomeUIState extends State<HomeUI> {
         ),
       ],
     );
+  }
+
+  /// Detail Event
+
+  Widget _setDetailEvent() {
+    return Column(
+      children: <Widget>[
+        _setTypeEvent(),
+        _setDateEvents(),
+        _setEventDetail(),
+      ],
+    );
+  }
+
+  Widget _setTypeEvent() {
+    return Padding(
+      padding: EdgeInsets.only(top: 50),
+      child: Column(
+        children: <Widget>[
+          CustomTextShadow(
+            _currentEvent.type,
+            style: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            widget.city,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.red,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _setDateEvents() {
+    return Padding(
+      padding: EdgeInsets.only(top: 60),
+      child: Column(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.centerLeft,
+            child: CustomTextShadow(
+              'Fechas',
+              style: TextStyle(
+                fontSize: 35,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          Container(
+            height: 200,
+            margin: EdgeInsets.only(top: 30),
+            child: ListView.separated(
+              padding: EdgeInsets.zero,
+              itemCount: _currentEvent.eventDates.length,
+              separatorBuilder: (_, int index) => Divider(
+                color: Colors.grey,
+                height: 1,
+              ),
+              itemBuilder: (_, int index) {
+                final EventDate item = _currentEvent.eventDates[index];
+
+                return ListTile(
+                  leading: Column(
+                    children: <Widget>[
+                      CustomTextShadow(
+                        Utils.getMonthString(item.date),
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      CustomTextShadow(
+                        '${Utils.getDayMonth(item.date)}',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  title: Text(
+                    '${Utils.getDayString(item.date)} ${Utils.getHourString(item.date)}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red,
+                    ),
+                  ),
+                  subtitle: CustomTextShadow(
+                    item.place,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  trailing: Container(
+                    width: 110,
+                    child: Row(
+                      children: <Widget>[
+                        GestureDetector(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            height: 30,
+                            width: 30,
+                            child: Center(
+                              child: Text(
+                                'IR',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        GestureDetector(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            height: 30,
+                            width: 70,
+                            child: Center(
+                              child: Text(
+                                'Agendar',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _setEventDetail() {
+    return Padding(
+      padding: EdgeInsets.only(top: 40),
+      child: Column(
+        children: <Widget>[
+          CustomTextShadow(
+            _currentEvent.name,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 25),
+            child: CustomTextShadow(
+              _currentEvent.description,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _onBackPressed() async {
+    _restoreScreen();
+    return false;
+  }
+
+  void _restoreScreen() {
+    if (_isShowingDetails) {
+      setState(() => _isShowingDetails = false);
+    } else {
+      Navigator.pop(context);
+    }
   }
 }
