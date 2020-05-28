@@ -31,6 +31,7 @@ class _HomeUIState extends State<HomeUI> {
   String _filter;
 
   bool _isShowingDetails = false;
+  bool _visible = true;
 
   @override
   void initState() {
@@ -67,8 +68,16 @@ class _HomeUIState extends State<HomeUI> {
                         children: <Widget>[
                           _setComing(),
                           _setTitle(),
-                          if (!_isShowingDetails) _setEventList(),
-                          if (_isShowingDetails) _setDetailEvent(),
+                          AnimatedOpacity(
+                            opacity: _visible ? 1 : 0,
+                            duration: Duration(milliseconds: 500),
+                            child: Column(
+                              children: <Widget>[
+                                if (!_isShowingDetails) _setEventList(),
+                                if (_isShowingDetails) _setDetailEvent(),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -145,7 +154,10 @@ class _HomeUIState extends State<HomeUI> {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           CustomButton(
-            onPressed: () => setState(() => _isShowingDetails = true),
+            onPressed: () {
+              _setTransitionOpacity();
+              _showDetails(true);
+            },
             text: 'Ver Fechas',
             backgroundColor: Colors.red,
             textColor: Colors.white,
@@ -587,11 +599,25 @@ class _HomeUIState extends State<HomeUI> {
     return false;
   }
 
+  void _setTransitionOpacity() {
+    setState(() => _visible = !_visible);
+
+    Future.delayed(Duration(milliseconds: 500), () {
+      setState(() => _visible = !_visible);
+    });
+  }
+
   void _restoreScreen() {
     if (_isShowingDetails) {
-      setState(() => _isShowingDetails = false);
+      _setTransitionOpacity();
+      _showDetails(false);
     } else {
       Navigator.pop(context);
     }
+  }
+
+  void _showDetails(bool isShow) {
+    Future.delayed(Duration(milliseconds: 600),
+        () => setState(() => _isShowingDetails = isShow));
   }
 }
