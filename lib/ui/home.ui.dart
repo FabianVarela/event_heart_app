@@ -617,7 +617,7 @@ class _HomeUIState extends State<HomeUI> {
   }
 
   void _showDetails(bool isShow) {
-    Future.delayed(Duration(milliseconds: 600),
+    Future.delayed(Duration(milliseconds: 500),
         () => setState(() => _isShowingDetails = isShow));
   }
 }
