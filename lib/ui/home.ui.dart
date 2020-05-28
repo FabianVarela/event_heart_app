@@ -521,6 +521,7 @@ class _HomeUIState extends State<HomeUI> {
                         ),
                         SizedBox(width: 10),
                         GestureDetector(
+                          onTap: () => Navigator.pushNamed(context, '/profile'),
                           child: Container(
                             decoration: BoxDecoration(
                               color: Colors.red,
