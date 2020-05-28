@@ -324,6 +324,7 @@ class _HomeUIState extends State<HomeUI> {
           Image.asset(
             item.imageUrl,
             fit: BoxFit.cover,
+            height: double.infinity,
             width: double.infinity,
           ),
           Positioned(
