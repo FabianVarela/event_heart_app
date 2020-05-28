@@ -34,7 +34,7 @@ class _MuState extends State<MyEvents> {
               children: <Widget>[
                 CustomAppBar(),
                 Padding(
-                  padding: EdgeInsets.only(top: 120, left: 20, right: 20),
+                  padding: EdgeInsets.only(top: 110, left: 20, right: 20),
                   child: IntervalColumnAnimation(
                     duration: Duration(milliseconds: 1000),
                     height: MediaQuery.of(context).size.height,
