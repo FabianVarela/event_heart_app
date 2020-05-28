@@ -30,7 +30,9 @@ class MyApp extends StatelessWidget {
             case '/':
               return SelectCityUI();
             case '/home':
-              return HomeUI();
+              return HomeUI(
+                city: (settings.arguments as dynamic)['city'] as String,
+              );
             default:
               return Container();
           }

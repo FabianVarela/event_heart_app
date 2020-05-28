@@ -122,7 +122,11 @@ class _SelectCityUIState extends State<SelectCityUI> {
       child: GestureDetector(
         onTap: _currentCity == null
             ? null
-            : () => Navigator.pushNamed(context, '/home'),
+            : () => Navigator.pushNamed(
+                  context,
+                  '/home',
+                  arguments: <String, dynamic>{'city': _currentCity.name},
+                ),
         child: Padding(
           padding: EdgeInsets.all(5),
           child: Row(
