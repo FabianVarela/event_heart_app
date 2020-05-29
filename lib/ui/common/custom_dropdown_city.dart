@@ -1,8 +1,8 @@
 import 'package:event_heart_app/model/city.dart';
 import 'package:flutter/material.dart';
 
-class CustomDropDown extends StatefulWidget {
-  CustomDropDown({
+class CustomDropDownCity extends StatefulWidget {
+  CustomDropDownCity({
     @required this.cities,
     @required this.currentCity,
     @required this.setCurrentCity,
@@ -17,10 +17,10 @@ class CustomDropDown extends StatefulWidget {
   final String hintText;
 
   @override
-  _CustomDropDownState createState() => _CustomDropDownState();
+  _CustomDropDownCityState createState() => _CustomDropDownCityState();
 }
 
-class _CustomDropDownState extends State<CustomDropDown> {
+class _CustomDropDownCityState extends State<CustomDropDownCity> {
   List<DropdownMenuItem<City>> _cityList;
 
   @override
