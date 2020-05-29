@@ -1,6 +1,7 @@
 import 'package:event_heart_app/model/city.dart';
 import 'package:event_heart_app/ui/animation/heart.animation.dart';
-import 'package:event_heart_app/ui/common/custom_dropdown.dart';
+import 'package:event_heart_app/ui/common/custom_dropdown_city.dart';
+import 'package:event_heart_app/utils/custom_colors.dart';
 import 'package:flutter/material.dart';
 
 class SelectCityUI extends StatefulWidget {
@@ -84,7 +85,7 @@ class _SelectCityUIState extends State<SelectCityUI> {
         style: TextStyle(
           fontSize: 20,
           fontFamily: 'Dirty Headline',
-          color: Colors.white,
+          color: CustomColors.white,
         ),
       ),
     );
@@ -97,7 +98,7 @@ class _SelectCityUIState extends State<SelectCityUI> {
         'Selecciona tu ciudad',
         style: TextStyle(
           fontSize: 18,
-          color: Colors.white,
+          color: CustomColors.white,
         ),
       ),
     );
@@ -106,12 +107,12 @@ class _SelectCityUIState extends State<SelectCityUI> {
   Widget _setDropDownCity() {
     return Padding(
       padding: EdgeInsets.fromLTRB(70, 0, 70, 20),
-      child: CustomDropDown(
+      child: CustomDropDownCity(
         cities: _cities ?? <City>[],
         currentCity: _currentCity ?? City(),
         setCurrentCity: (City city) => setState(() => _currentCity = city),
         fontSize: 16,
-        hintText: 'Select a city',
+        hintText: 'Seleccione una ciudad',
       ),
     );
   }
@@ -120,13 +121,7 @@ class _SelectCityUIState extends State<SelectCityUI> {
     return Padding(
       padding: EdgeInsets.only(bottom: 10),
       child: GestureDetector(
-        onTap: _currentCity == null
-            ? null
-            : () => Navigator.pushNamed(
-                  context,
-                  '/home',
-                  arguments: <String, dynamic>{'city': _currentCity.name},
-                ),
+        onTap: _currentCity == null ? null : _goToHome,
         child: Padding(
           padding: EdgeInsets.all(5),
           child: Row(
@@ -137,7 +132,9 @@ class _SelectCityUIState extends State<SelectCityUI> {
                 'Buscar evento',
                 style: TextStyle(
                   fontSize: 18,
-                  color: _currentCity == null ? Colors.grey : Colors.white,
+                  color: _currentCity == null
+                      ? CustomColors.grey
+                      : CustomColors.white,
                 ),
               ),
               SizedBox(width: 5),
@@ -145,8 +142,8 @@ class _SelectCityUIState extends State<SelectCityUI> {
                 Icons.arrow_forward,
                 size: 30,
                 color: _currentCity == null
-                    ? Colors.redAccent.withOpacity(.5)
-                    : Colors.red,
+                    ? CustomColors.red.withOpacity(.5)
+                    : CustomColors.red,
               ),
             ],
           ),
@@ -163,7 +160,7 @@ class _SelectCityUIState extends State<SelectCityUI> {
         children: <TextSpan>[
           TextSpan(
             text: text.substring(0, 1),
-            style: TextStyle(color: Colors.red),
+            style: TextStyle(color: CustomColors.red),
           ),
           if (text.length > 1)
             TextSpan(
@@ -172,6 +169,14 @@ class _SelectCityUIState extends State<SelectCityUI> {
             ),
         ],
       ),
+    );
+  }
+
+  void _goToHome() {
+    Navigator.pushNamed(
+      context,
+      '/home',
+      arguments: <String, dynamic>{'city': _currentCity.name},
     );
   }
 }
