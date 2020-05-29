@@ -4,6 +4,7 @@ import 'package:event_heart_app/ui/screen_select_city/select_city.ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,7 +12,7 @@ Future<void> main() async {
   await SystemChrome.setPreferredOrientations(
       <DeviceOrientation>[DeviceOrientation.portraitUp]);
 
-  runApp(MyApp());
+  initializeDateFormatting('es', null).then((_) => runApp(MyApp()));
 }
 
 class MyApp extends StatelessWidget {
